@@ -5,7 +5,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
-import android.util.Log;
 
 import java.lang.ref.SoftReference;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +13,7 @@ import io.volar.configuration.NetworkConfiguration;
 import io.volar.https.SslSocketFactoryHelper;
 import io.volar.https.SslSocketFactoryParams;
 import io.volar.https.TrustAllHostnameVerifier;
+import io.volar.util.LOG;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 
@@ -277,7 +277,7 @@ public final class Volar {
      */
     void log(String content) {
         if (getConfiguration().isLogEnabled()) {
-            Log.i(getConfiguration().getLogTag(), content);
+            LOG.i(getConfiguration().getLogTag(), content);
         }
     }
 
