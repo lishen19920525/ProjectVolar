@@ -69,6 +69,27 @@ public final class HttpParams {
     }
 
     /**
+     * Set a header
+     *
+     * @param name  field name
+     * @param value value
+     */
+    public void setHeader(String name, String value) {
+        if (!TextUtils.isEmpty(name))
+            headersBuilder.set(name, value);
+    }
+
+    /**
+     * Remove a header
+     *
+     * @param name field name
+     */
+    public void removeHeader(String name) {
+        if (!TextUtils.isEmpty(name))
+            headersBuilder.removeAll(name);
+    }
+
+    /**
      * Set request body directly
      *
      * @param requestBody request body
