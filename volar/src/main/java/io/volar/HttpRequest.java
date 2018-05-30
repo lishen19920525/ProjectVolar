@@ -290,7 +290,7 @@ class HttpRequest<T> {
                         ((ObjectCallback<T>) callback).onSuccess(httpResponse, httpResponse.responseData);
                         break;
                     case HttpResponse.PARSE_TYPE_OBJECT_LIST:
-                        ((ObjectListCallback<T>) callback).onSuccess(httpResponse, (List<T>) httpResponse.responseData);
+                        ((ObjectListCallback<T>) callback).onSuccess(httpResponse, (T[]) httpResponse.responseData);
                         break;
                 }
             } else {

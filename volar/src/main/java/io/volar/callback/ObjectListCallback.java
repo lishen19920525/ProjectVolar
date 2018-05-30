@@ -1,7 +1,5 @@
 package io.volar.callback;
 
-import java.util.List;
-
 import io.volar.HttpResponse;
 
 /**
@@ -10,5 +8,5 @@ import io.volar.HttpResponse;
  */
 
 public interface ObjectListCallback<T> extends BaseCallback {
-    void onSuccess(HttpResponse response, List<T> tList);
+    void onSuccess(HttpResponse response, T[] tList);
 }
