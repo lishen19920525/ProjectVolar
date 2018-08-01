@@ -9,4 +9,6 @@ import io.volar.HttpResponse;
 
 public interface ObjectListCallback<T> extends BaseCallback {
     void onSuccess(HttpResponse response, T[] tList);
+
+    void onFailure(HttpResponse response, int errorCode, String errorMessage);
 }
