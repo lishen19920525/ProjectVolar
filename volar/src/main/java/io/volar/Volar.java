@@ -205,6 +205,16 @@ public final class Volar {
     }
 
     /**
+     * Download
+     *
+     * @param url url
+     * @return download request
+     */
+    public DownloadRequest.DownloadRequestBuilder DOWNLOAD(String url) {
+        return new DownloadRequest.DownloadRequestBuilder(url);
+    }
+
+    /**
      * Main handler
      *
      * @return handler
