@@ -12,6 +12,4 @@ import io.volar.HttpResponse;
 
 public interface JsonCallback extends BaseCallback {
     void onSuccess(HttpResponse response, JSONObject jsonObject);
-
-    void onFailure(HttpResponse response, int errorCode, String errorMessage);
 }
