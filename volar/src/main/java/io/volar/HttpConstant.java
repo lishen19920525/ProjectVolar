@@ -5,9 +5,8 @@ package io.volar;
  * Constants
  */
 
-public final class Constant {
+public final class HttpConstant {
     public static final String DEFAULT_LOG_TAG = "Volar";
-    public static final String NETWORK_MODULE_NAME = "com.glowgeniuses.android.athena.network.configuration.NetworkModule";
     public static final long DEFAULT_CONNECT_TIMEOUT = 15 * 1000;
     public static final long DEFAULT_READ_TIMEOUT = 45 * 1000;
     public static final long DEFAULT_WRITE_TIMEOUT = 45 * 1000;
@@ -38,5 +37,9 @@ public final class Constant {
         static final String DATA_PARSE_FAILURE = "Data parsing failure";
         static final String SERVER_NO_RESPONSE = "Failed to connect to the server";
         static final String OTHER_ERROR = "Other problems";
+    }
+
+    public enum LogLevel {
+        V, I, D, W, E
     }
 }

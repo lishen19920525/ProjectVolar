@@ -85,6 +85,8 @@ class HttpRequest<T> {
     }
 
     private void executeRequest() {
+        String originalJsonStringBody = httpParams.getParamsJson();
+        // custom filter
         if (Volar.getDefault().getConfiguration().getCustomFilter() != null) {
             httpParams = Volar.getDefault().getConfiguration().getCustomFilter().filter(httpParams);
         }
@@ -98,36 +100,41 @@ class HttpRequest<T> {
 
         // method
         switch (method) {
-            case Constant.Method.GET:
+            case HttpConstant.Method.GET:
                 url = httpParams.generateUrlWithParams(url);
                 requestBuilder.get();
                 Volar.getDefault().log("GET URL: " + url);
                 break;
-            case Constant.Method.DELETE:
+            case HttpConstant.Method.DELETE:
                 requestBuilder.delete(httpParams.getRequestBody());
                 Volar.getDefault().log("DELETE URL: " + url);
                 break;
-            case Constant.Method.HEAD:
+            case HttpConstant.Method.HEAD:
                 url = httpParams.generateUrlWithParams(url);
                 Volar.getDefault().log("HEAD URL: " + url);
                 break;
-            case Constant.Method.POST:
+            case HttpConstant.Method.POST:
                 requestBuilder.post(httpParams.getRequestBody());
                 Volar.getDefault().log("POST URL: " + url);
                 break;
-            case Constant.Method.PUT:
+            case HttpConstant.Method.PUT:
                 requestBuilder.put(httpParams.getRequestBody());
                 Volar.getDefault().log("PUT URL: " + url);
                 break;
-            case Constant.Method.PATCH:
+            case HttpConstant.Method.PATCH:
                 requestBuilder.patch(httpParams.getRequestBody());
                 Volar.getDefault().log("PATCH URL: " + url);
                 break;
         }
 
-        if (method != Constant.Method.GET && method != Constant.Method.HEAD
-                && !TextUtils.isEmpty(httpParams.getParamsJson())) {
-            Volar.getDefault().log("REQUEST PARSE_TYPE_JSON PARAMS: " + httpParams.getParamsJson());
+        if (method != HttpConstant.Method.GET && method != HttpConstant.Method.HEAD && !TextUtils.isEmpty(httpParams.getParamsJson())) {
+            if (Volar.getDefault().getConfiguration().isLogParamsBeforeFilter()) {
+                // log original json params
+                Volar.getDefault().log("REQUEST JSON PARAMS: " + originalJsonStringBody);
+            } else {
+                // log json params after custom filter
+                Volar.getDefault().log("REQUEST JSON PARAMS: " + httpParams.getParamsJson());
+            }
         }
 
         // url
@@ -168,6 +175,7 @@ class HttpRequest<T> {
         httpResponse.call = call;
         httpResponse.canceled = call.isCanceled();
         httpResponse.requestCostTime = System.currentTimeMillis() - timeMilestone;
+        httpResponse.extra = httpParams.extra;
 
         String originalResponseString = null;
 
@@ -199,7 +207,12 @@ class HttpRequest<T> {
             httpResponse = Volar.getDefault().getConfiguration().getCustomFilter().filter(httpResponse);
         }
 
-        Volar.getDefault().log("RESPONSE: " + originalResponseString);
+        // show original response or not
+        if (Volar.getDefault().getConfiguration().isLogResponseBeforeFilter()) {
+            Volar.getDefault().log("RESPONSE: " + originalResponseString);
+        } else {
+            Volar.getDefault().log("RESPONSE: " + httpResponse.responseString);
+        }
         Volar.getDefault().log("RESPONSE CODE: " + httpResponse.code
                 + "\nREQUEST COST TIME: " + httpResponse.requestCostTime + " ms"
                 + "\nURL: " + httpResponse.url);

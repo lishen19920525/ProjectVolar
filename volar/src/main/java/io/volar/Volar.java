@@ -151,7 +151,7 @@ public final class Volar {
      * @return request builder
      */
     public HttpRequest.HttpRequestBuilder GET(String url) {
-        return new HttpRequest.HttpRequestBuilder(url, Constant.Method.GET);
+        return new HttpRequest.HttpRequestBuilder(url, HttpConstant.Method.GET);
     }
 
     /**
@@ -161,7 +161,7 @@ public final class Volar {
      * @return request builder
      */
     public HttpRequest.HttpRequestBuilder POST(String url) {
-        return new HttpRequest.HttpRequestBuilder(url, Constant.Method.POST);
+        return new HttpRequest.HttpRequestBuilder(url, HttpConstant.Method.POST);
     }
 
     /**
@@ -171,7 +171,7 @@ public final class Volar {
      * @return request builder
      */
     public HttpRequest.HttpRequestBuilder PUT(String url) {
-        return new HttpRequest.HttpRequestBuilder(url, Constant.Method.PUT);
+        return new HttpRequest.HttpRequestBuilder(url, HttpConstant.Method.PUT);
     }
 
     /**
@@ -181,7 +181,7 @@ public final class Volar {
      * @return request builder
      */
     public HttpRequest.HttpRequestBuilder DELETE(String url) {
-        return new HttpRequest.HttpRequestBuilder(url, Constant.Method.DELETE);
+        return new HttpRequest.HttpRequestBuilder(url, HttpConstant.Method.DELETE);
     }
 
     /**
@@ -191,7 +191,7 @@ public final class Volar {
      * @return request builder
      */
     public HttpRequest.HttpRequestBuilder HEAD(String url) {
-        return new HttpRequest.HttpRequestBuilder(url, Constant.Method.HEAD);
+        return new HttpRequest.HttpRequestBuilder(url, HttpConstant.Method.HEAD);
     }
 
     /**
@@ -201,7 +201,7 @@ public final class Volar {
      * @return request builder
      */
     public HttpRequest.HttpRequestBuilder PATCH(String url) {
-        return new HttpRequest.HttpRequestBuilder(url, Constant.Method.PATCH);
+        return new HttpRequest.HttpRequestBuilder(url, HttpConstant.Method.PATCH);
     }
 
     /**
@@ -258,7 +258,7 @@ public final class Volar {
      */
     int generateMessageWhat() {
         uniqueMessageWhat++;
-        if (uniqueMessageWhat > Constant.MSG_MAX_WHAT) {
+        if (uniqueMessageWhat > HttpConstant.MSG_MAX_WHAT) {
             uniqueMessageWhat = 0;
         }
         return uniqueMessageWhat;
@@ -287,7 +287,24 @@ public final class Volar {
      */
     void log(String content) {
         if (getConfiguration().isLogEnabled()) {
-            LOG.i(getConfiguration().getLogTag(), content);
+            switch (getConfiguration().getLogLevel()) {
+                case V:
+                    LOG.v(getConfiguration().getLogTag(), content);
+                    break;
+                default:
+                case I:
+                    LOG.i(getConfiguration().getLogTag(), content);
+                    break;
+                case D:
+                    LOG.d(getConfiguration().getLogTag(), content);
+                    break;
+                case W:
+                    LOG.w(getConfiguration().getLogTag(), content);
+                    break;
+                case E:
+                    LOG.e(getConfiguration().getLogTag(), content);
+                    break;
+            }
         }
     }
 

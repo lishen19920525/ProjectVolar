@@ -60,35 +60,34 @@ public final class HttpResponse<T> {
     public void setError(int errorCode) {
         success = false;
         code = errorCode;
-        CustomErrorMessages customErrorMessages = Volar.getDefault().getConfiguration()
-                .getCustomErrorMessages();
+        CustomErrorMessages customErrorMessages = Volar.getDefault().getConfiguration().getCustomErrorMessages();
         switch (errorCode) {
             case NETWORK_ERROR:
                 if (customErrorMessages != null) {
                     message = customErrorMessages.networkError();
                 } else {
-                    message = Constant.ErrorMessages.NETWORK_ERROR;
+                    message = HttpConstant.ErrorMessages.NETWORK_ERROR;
                 }
                 break;
             case SERVER_NO_RESPONSE:
                 if (customErrorMessages != null) {
                     message = customErrorMessages.serverNoResponse();
                 } else {
-                    message = Constant.ErrorMessages.SERVER_NO_RESPONSE;
+                    message = HttpConstant.ErrorMessages.SERVER_NO_RESPONSE;
                 }
                 break;
             case DATA_PARSE_FAILURE:
                 if (customErrorMessages != null) {
                     message = customErrorMessages.dataParseFailed();
                 } else {
-                    message = Constant.ErrorMessages.DATA_PARSE_FAILURE;
+                    message = HttpConstant.ErrorMessages.DATA_PARSE_FAILURE;
                 }
                 break;
             default:
                 if (customErrorMessages != null) {
                     message = customErrorMessages.otherError(errorCode);
                 } else {
-                    message = Constant.ErrorMessages.OTHER_ERROR;
+                    message = HttpConstant.ErrorMessages.OTHER_ERROR;
                 }
                 break;
         }

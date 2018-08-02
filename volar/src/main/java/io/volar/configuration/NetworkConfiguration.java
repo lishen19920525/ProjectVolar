@@ -6,7 +6,7 @@ import java.net.Proxy;
 
 import javax.net.ssl.HostnameVerifier;
 
-import io.volar.Constant;
+import io.volar.HttpConstant;
 import io.volar.https.SslSocketFactoryParams;
 import okhttp3.Cache;
 import okhttp3.CookieJar;
@@ -21,10 +21,13 @@ import okhttp3.internal.tls.OkHostnameVerifier;
 public final class NetworkConfiguration {
     private boolean logEnabled;
     private String logTag;
+    private HttpConstant.LogLevel logLevel;
     private CommonHeaders commonHeaders;
     private CustomFilter customFilter;
     private CustomErrorMessages customErrorMessages;
     private boolean trustAllHttps;
+    private boolean logParamsBeforeFilter;
+    private boolean logResponseBeforeFilter;
     // okhttp
     private long connectTimeout;
     private long readTimeout;
@@ -58,6 +61,9 @@ public final class NetworkConfiguration {
         cache = builder.cache;
         proxy = builder.proxy;
         trustAllHttps = builder.trustAllHttps;
+        logParamsBeforeFilter = builder.logParamsBeforeFilter;
+        logResponseBeforeFilter = builder.logResponseBeforeFilter;
+        logLevel = builder.logLevel;
     }
 
     public boolean isLogEnabled() {
@@ -132,9 +138,22 @@ public final class NetworkConfiguration {
         return trustAllHttps;
     }
 
+    public boolean isLogParamsBeforeFilter() {
+        return logParamsBeforeFilter;
+    }
+
+    public boolean isLogResponseBeforeFilter() {
+        return logResponseBeforeFilter;
+    }
+
+    public HttpConstant.LogLevel getLogLevel() {
+        return logLevel;
+    }
+
     public static final class Builder {
         private boolean logEnabled;
         private String logTag;
+        private HttpConstant.LogLevel logLevel;
         private CommonHeaders commonHeaders;
         private CustomFilter customFilter;
         private CustomErrorMessages customErrorMessages;
@@ -151,13 +170,16 @@ public final class NetworkConfiguration {
         private boolean followRedirects;
         private Cache cache;
         private Proxy proxy;
+        private boolean logParamsBeforeFilter;
+        private boolean logResponseBeforeFilter;
 
         public Builder() {
             logEnabled = true;
-            logTag = Constant.DEFAULT_LOG_TAG;
-            connectTimeout = Constant.DEFAULT_CONNECT_TIMEOUT;
-            readTimeout = Constant.DEFAULT_READ_TIMEOUT;
-            writeTimeout = Constant.DEFAULT_WRITE_TIMEOUT;
+            logTag = HttpConstant.DEFAULT_LOG_TAG;
+            logLevel = HttpConstant.LogLevel.I;
+            connectTimeout = HttpConstant.DEFAULT_CONNECT_TIMEOUT;
+            readTimeout = HttpConstant.DEFAULT_READ_TIMEOUT;
+            writeTimeout = HttpConstant.DEFAULT_WRITE_TIMEOUT;
             cookieJar = CookieJar.NO_COOKIES;
             hostnameVerifier = OkHostnameVerifier.INSTANCE;
             dns = Dns.SYSTEM;
@@ -165,6 +187,8 @@ public final class NetworkConfiguration {
             followRedirects = true;
             retryOnConnectionFailure = true;
             trustAllHttps = false;
+            logResponseBeforeFilter = false;
+            logParamsBeforeFilter = false;
         }
 
         public Builder logEnabled(boolean val) {
@@ -268,6 +292,21 @@ public final class NetworkConfiguration {
 
         public Builder trustAllHttps(boolean val) {
             trustAllHttps = val;
+            return this;
+        }
+
+        public Builder logParamsBeforeFilter(boolean val) {
+            logParamsBeforeFilter = val;
+            return this;
+        }
+
+        public Builder logResponseBeforeFilter(boolean val) {
+            logResponseBeforeFilter = val;
+            return this;
+        }
+
+        public Builder logLevel(HttpConstant.LogLevel val) {
+            logLevel = val;
             return this;
         }
 

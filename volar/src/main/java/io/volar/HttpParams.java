@@ -31,6 +31,9 @@ public final class HttpParams {
     private String paramsJson;
     // priority 4
     private VolarArrayMap<String, Object> stringParams;
+    // content type
+    private String textBodyContentType = HttpConstant.ContentType.JSON;
+    // extra
     public String extra;
 
     public HttpParams() {
@@ -45,6 +48,15 @@ public final class HttpParams {
         if (headersBuilder == null) {
             headersBuilder = new Headers.Builder();
         }
+    }
+
+    /**
+     * Set the text body content type; json textplain
+     *
+     * @param textBodyContentType
+     */
+    public void setTextBodyContentType(String textBodyContentType) {
+        this.textBodyContentType = textBodyContentType;
     }
 
     /**
@@ -171,6 +183,19 @@ public final class HttpParams {
     }
 
     /**
+     * Get params json string
+     *
+     * @return json string
+     */
+    public String getParamsJson() {
+        if (TextUtils.isEmpty(paramsJson)) {
+            return JSON.toJSONString(stringParams);
+        } else {
+            return paramsJson;
+        }
+    }
+
+    /**
      * Get headers
      *
      * @return headers
@@ -218,15 +243,6 @@ public final class HttpParams {
     }
 
     /**
-     * Get params json string
-     *
-     * @return json string
-     */
-    String getParamsJson() {
-        return paramsJson;
-    }
-
-    /**
      * Get request body
      *
      * @return request body
@@ -246,16 +262,16 @@ public final class HttpParams {
             return requestBody;
         } else if (!TextUtils.isEmpty(paramsJson)) {
             // json string body direct
-            requestBody = RequestBody.create(MediaType.parse(Constant.ContentType.JSON), paramsJson);
+            requestBody = RequestBody.create(MediaType.parse(textBodyContentType), paramsJson);
             return requestBody;
         } else if (stringParams.size() > 0) {
             // json string body
             paramsJson = JSON.toJSONString(stringParams);
-            requestBody = RequestBody.create(MediaType.parse(Constant.ContentType.JSON), paramsJson);
+            requestBody = RequestBody.create(MediaType.parse(textBodyContentType), paramsJson);
             return requestBody;
         } else {
             // null params
-            requestBody = RequestBody.create(MediaType.parse(Constant.ContentType.TEXT_PLAIN), "");
+            requestBody = RequestBody.create(MediaType.parse(HttpConstant.ContentType.TEXT_PLAIN), "");
             return requestBody;
         }
     }
@@ -284,7 +300,7 @@ public final class HttpParams {
         } catch (Exception ignore) {
         }
         if (contentTypeFor == null) {
-            contentTypeFor = Constant.ContentType.OCTET_STREAM;
+            contentTypeFor = HttpConstant.ContentType.OCTET_STREAM;
         }
         return contentTypeFor;
     }
