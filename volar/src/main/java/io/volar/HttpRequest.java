@@ -143,8 +143,10 @@ class HttpRequest<T> {
         // headers
         if (httpParams.getHeadersBuilder() != null) {
             Headers headers = httpParams.getHeadersBuilder().build();
-            Volar.getDefault().log("REQUEST HEADERS: \n" + headers.toString());
             requestBuilder.headers(headers);
+            if (Volar.getDefault().getConfiguration().isLogHeader()) {
+                Volar.getDefault().log("REQUEST HEADERS: \n" + headers.toString());
+            }
         }
 
         // execute request async
@@ -214,6 +216,7 @@ class HttpRequest<T> {
             Volar.getDefault().log("RESPONSE: " + httpResponse.responseString);
         }
         Volar.getDefault().log("RESPONSE CODE: " + httpResponse.code
+                +"\nRESPONSE MESSAGE: " + httpResponse.message
                 + "\nREQUEST COST TIME: " + httpResponse.requestCostTime + " ms"
                 + "\nURL: " + httpResponse.url);
 
@@ -223,9 +226,9 @@ class HttpRequest<T> {
             if (!parseToData(httpResponse.responseString)) {
                 httpResponse.setError(HttpResponse.DATA_PARSE_FAILURE);
             } else {
+                httpResponse.parseDataCostTime = System.currentTimeMillis() - timeMilestone;
                 Volar.getDefault().log("PARSE DATA COST TIME: " + httpResponse.parseDataCostTime + "ms");
             }
-            httpResponse.parseDataCostTime = System.currentTimeMillis() - timeMilestone;
         }
 
         // post to main thread to callback

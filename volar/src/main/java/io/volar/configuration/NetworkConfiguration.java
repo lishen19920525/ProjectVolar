@@ -21,6 +21,7 @@ import okhttp3.internal.tls.OkHostnameVerifier;
 public final class NetworkConfiguration {
     private boolean logEnabled;
     private String logTag;
+    private boolean logHeader;
     private HttpConstant.LogLevel logLevel;
     private CommonHeaders commonHeaders;
     private CustomFilter customFilter;
@@ -150,6 +151,10 @@ public final class NetworkConfiguration {
         return logLevel;
     }
 
+    public boolean isLogHeader() {
+        return logHeader;
+    }
+
     public static final class Builder {
         private boolean logEnabled;
         private String logTag;
@@ -172,6 +177,7 @@ public final class NetworkConfiguration {
         private Proxy proxy;
         private boolean logParamsBeforeFilter;
         private boolean logResponseBeforeFilter;
+        private boolean logHeader;
 
         public Builder() {
             logEnabled = true;
@@ -189,6 +195,7 @@ public final class NetworkConfiguration {
             trustAllHttps = false;
             logResponseBeforeFilter = false;
             logParamsBeforeFilter = false;
+            logHeader = true;
         }
 
         public Builder logEnabled(boolean val) {
@@ -307,6 +314,11 @@ public final class NetworkConfiguration {
 
         public Builder logLevel(HttpConstant.LogLevel val) {
             logLevel = val;
+            return this;
+        }
+
+        public Builder logHeader(boolean val) {
+            logHeader = val;
             return this;
         }
 
