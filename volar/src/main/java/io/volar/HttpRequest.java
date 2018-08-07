@@ -179,6 +179,8 @@ class HttpRequest<T> {
         httpResponse.requestCostTime = System.currentTimeMillis() - timeMilestone;
         httpResponse.extra = httpParams.extra;
 
+        timeMilestone = System.currentTimeMillis();
+
         String originalResponseString = null;
 
         if (response != null) {
@@ -209,27 +211,29 @@ class HttpRequest<T> {
             httpResponse = Volar.getDefault().getConfiguration().getCustomFilter().filter(httpResponse);
         }
 
+        // data parse
+        if (httpResponse.success) {
+            if (!parseToData(httpResponse.responseString)) {
+                httpResponse.setError(HttpResponse.DATA_PARSE_FAILURE);
+            }
+        }
+        httpResponse.parseDataCostTime = System.currentTimeMillis() - timeMilestone;
+
+        String responseLog = "RESPONSE CODE: " + httpResponse.code
+                + "\nRESPONSE MESSAGE: " + httpResponse.message
+                + "\nREQUEST COST TIME: " + httpResponse.requestCostTime + " ms";
+        if (httpResponse.parseDataCostTime > 0) {
+            responseLog += "\nPARSE DATA COST TIME: " + httpResponse.parseDataCostTime + "ms";
+        }
+        responseLog += "\nURL: " + httpResponse.url;
+
         // show original response or not
         if (Volar.getDefault().getConfiguration().isLogResponseBeforeFilter()) {
             Volar.getDefault().log("RESPONSE: " + originalResponseString);
         } else {
             Volar.getDefault().log("RESPONSE: " + httpResponse.responseString);
         }
-        Volar.getDefault().log("RESPONSE CODE: " + httpResponse.code
-                +"\nRESPONSE MESSAGE: " + httpResponse.message
-                + "\nREQUEST COST TIME: " + httpResponse.requestCostTime + " ms"
-                + "\nURL: " + httpResponse.url);
-
-        // data parse
-        if (httpResponse.success) {
-            timeMilestone = System.currentTimeMillis();
-            if (!parseToData(httpResponse.responseString)) {
-                httpResponse.setError(HttpResponse.DATA_PARSE_FAILURE);
-            } else {
-                httpResponse.parseDataCostTime = System.currentTimeMillis() - timeMilestone;
-                Volar.getDefault().log("PARSE DATA COST TIME: " + httpResponse.parseDataCostTime + "ms");
-            }
-        }
+        Volar.getDefault().log(responseLog);
 
         // post to main thread to callback
         if (!httpResponse.cancelCallback) {
