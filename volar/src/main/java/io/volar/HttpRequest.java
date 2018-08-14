@@ -207,7 +207,7 @@ class HttpRequest<T> {
         }
 
         // custom filter
-        if (Volar.getDefault().getConfiguration().getCustomFilter() != null) {
+        if (Volar.getDefault().getConfiguration().getCustomFilter() != null && !TextUtils.isEmpty(httpResponse.responseString)) {
             httpResponse = Volar.getDefault().getConfiguration().getCustomFilter().filter(httpResponse);
         }
 
