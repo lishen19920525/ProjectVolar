@@ -1,5 +1,7 @@
 package io.volar;
 
+import java.security.PublicKey;
+
 /**
  * Created by LiShen on 2017/11/27.
  * Constants
@@ -10,15 +12,21 @@ public final class HttpConstant {
     public static final long DEFAULT_CONNECT_TIMEOUT = 15 * 1000;
     public static final long DEFAULT_READ_TIMEOUT = 45 * 1000;
     public static final long DEFAULT_WRITE_TIMEOUT = 45 * 1000;
-    public static final int MSG_MAX_WHAT = 10000;
 
-    static final class Method {
-        static final int GET = 1;
-        static final int POST = 2;
-        static final int PUT = 3;
-        static final int DELETE = 4;
-        static final int HEAD = 5;
-        static final int PATCH = 6;
+    enum Method {
+        GET, POST, PUT, DELETE, HEAD, PATCH
+    }
+
+    public enum LogLevel {
+        V, I, D, W, E
+    }
+
+    static final class ParseType {
+        static final int PARSE_TYPE_STRING = 0;
+        static final int PARSE_TYPE_JSON = 1;
+        static final int PARSE_TYPE_JSON_ARRAY = 2;
+        static final int PARSE_TYPE_OBJECT = 3;
+        static final int PARSE_TYPE_OBJECT_LIST = 4;
     }
 
     public static final class ContentType {
@@ -32,14 +40,17 @@ public final class HttpConstant {
         public static final String MULTI_PART = "multipart/form-data";
     }
 
+    public static final class Code {
+        public static final int SUCCESS = 200;
+        public static final int NETWORK_ERROR = -1000;
+        public static final int DATA_PARSE_FAILURE = -1010;
+        public static final int SERVER_NO_RESPONSE = 503;
+    }
+
     static final class ErrorMessages {
         static final String NETWORK_ERROR = "Something goes wrong with the network";
         static final String DATA_PARSE_FAILURE = "Data parsing failure";
-        static final String SERVER_NO_RESPONSE = "Failed to connect to the server";
-        static final String OTHER_ERROR = "Other problems";
-    }
-
-    public enum LogLevel {
-        V, I, D, W, E
+        static final String SERVER_NO_RESPONSE = "Service unavailable";
+        static final String OTHER_ERROR = "Unknown error";
     }
 }

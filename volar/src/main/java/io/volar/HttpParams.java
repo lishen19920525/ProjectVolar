@@ -26,21 +26,21 @@ public final class HttpParams {
     // priority 1
     private RequestBody requestBody;
     // priority 2
-    private VolarArrayMap<String, String> formParams;
+    private VolarArrayMap<String, String> formParamsMap;
     // priority 3
-    private String paramsJson;
-    // priority 4
-    private VolarArrayMap<String, Object> stringParams;
+    private String paramsString;
+    // priority 5
+    private VolarArrayMap<String, Object> paramsMap;
     // content type
-    private String textBodyContentType = HttpConstant.ContentType.JSON;
+    private String textBodyContentType = HttpConstant.ContentType.TEXT_PLAIN;
     // extra
     public String extra;
 
     public HttpParams() {
-        stringParams = new VolarArrayMap<>();
-        formParams = new VolarArrayMap<>();
+        paramsMap = new VolarArrayMap<>();
+        formParamsMap = new VolarArrayMap<>();
         requestBody = null;
-        paramsJson = null;
+        paramsString = "";
 
         if (Volar.getDefault().getConfiguration().getCommonHeaders() != null) {
             headersBuilder = Volar.getDefault().getConfiguration().getCommonHeaders().getCommonHeaders();
@@ -51,7 +51,7 @@ public final class HttpParams {
     }
 
     /**
-     * Set the text body content type; json textplain
+     * Set the text body content type; json or textPlain etc
      *
      * @param textBodyContentType
      */
@@ -118,7 +118,7 @@ public final class HttpParams {
      */
     public <T extends Number> void put(String key, T value) {
         if (!TextUtils.isEmpty(key))
-            stringParams.put(key, value);
+            paramsMap.put(key, value);
     }
 
     /**
@@ -129,7 +129,7 @@ public final class HttpParams {
      */
     public void put(String key, Boolean value) {
         if (!TextUtils.isEmpty(key))
-            stringParams.put(key, value);
+            paramsMap.put(key, value);
     }
 
     /**
@@ -140,7 +140,7 @@ public final class HttpParams {
      */
     public void put(String key, String value) {
         if (!TextUtils.isEmpty(key))
-            stringParams.put(key, value);
+            paramsMap.put(key, value);
     }
 
     /**
@@ -151,7 +151,7 @@ public final class HttpParams {
      */
     public void putFormBody(String key, String value) {
         if (!TextUtils.isEmpty(key))
-            formParams.put(key, value);
+            formParamsMap.put(key, value);
     }
 
     /**
@@ -169,7 +169,9 @@ public final class HttpParams {
      * @param paramsJsonString json string
      */
     public void setParamsJsonString(String paramsJsonString) {
-        paramsJson = paramsJsonString;
+        if (paramsJsonString != null)
+            paramsString = paramsJsonString;
+        setTextBodyContentType(HttpConstant.ContentType.JSON);
     }
 
     /**
@@ -183,16 +185,40 @@ public final class HttpParams {
     }
 
     /**
+     * Set text plain params
+     *
+     * @param paramsString
+     */
+    public void setParamsString(String paramsString) {
+        if (paramsString != null)
+            this.paramsString = paramsString;
+        setTextBodyContentType(HttpConstant.ContentType.TEXT_PLAIN);
+    }
+
+    /**
      * Get params json string
+     * Use {@link #getParamsString()}
      *
      * @return json string
      */
+    @Deprecated
     public String getParamsJson() {
-        if (TextUtils.isEmpty(paramsJson)) {
-            return JSON.toJSONString(stringParams);
-        } else {
-            return paramsJson;
+        return getParamsString();
+    }
+
+    /**
+     * Get params string
+     *
+     * @return
+     */
+    public String getParamsString() {
+        if (TextUtils.isEmpty(paramsString)) {
+            return paramsString;
         }
+        if (paramsMap.size() > 0) {
+            return JSON.toJSONString(paramsMap);
+        }
+        return paramsString;
     }
 
     /**
@@ -211,16 +237,16 @@ public final class HttpParams {
      * @return url with params
      */
     String generateUrlWithParams(String url) {
-        if (stringParams.size() == 0) {
+        if (paramsMap.size() == 0) {
             return url;
         }
         StringBuilder paramsUrl = new StringBuilder("?");
         String key;
         Object value;
         String valueStr;
-        for (int i = 0; i < stringParams.keySet().size(); i++) {
-            key = stringParams.keyAt(i);
-            value = stringParams.get(key);
+        for (int i = 0; i < paramsMap.keySet().size(); i++) {
+            key = paramsMap.keyAt(i);
+            value = paramsMap.get(key);
             if (value != null) {
                 valueStr = String.valueOf(value);
                 try {
@@ -234,7 +260,7 @@ public final class HttpParams {
                     e.printStackTrace();
                 }
                 paramsUrl.append(key).append("=").append(value);
-                if (i != stringParams.size() - 1) {
+                if (i != paramsMap.size() - 1) {
                     paramsUrl.append("&");
                 }
             }
@@ -251,23 +277,23 @@ public final class HttpParams {
         if (requestBody != null) {
             // already have (custom or files etc...)
             return requestBody;
-        } else if (formParams.size() > 0) {
+        } else if (formParamsMap.size() > 0) {
             // form body
             FormBody.Builder builder = new FormBody.Builder();
-            for (String key : formParams.keySet()) {
-                builder.add(key, formParams.get(key));
+            for (String key : formParamsMap.keySet()) {
+                builder.add(key, formParamsMap.get(key));
 
             }
             requestBody = builder.build();
             return requestBody;
-        } else if (!TextUtils.isEmpty(paramsJson)) {
+        } else if (!TextUtils.isEmpty(paramsString)) {
             // json string body direct
-            requestBody = RequestBody.create(MediaType.parse(textBodyContentType), paramsJson);
+            requestBody = RequestBody.create(MediaType.parse(textBodyContentType), paramsString);
             return requestBody;
-        } else if (stringParams.size() > 0) {
+        } else if (paramsMap.size() > 0) {
             // json string body
-            paramsJson = JSON.toJSONString(stringParams);
-            requestBody = RequestBody.create(MediaType.parse(textBodyContentType), paramsJson);
+            paramsString = JSON.toJSONString(paramsMap);
+            requestBody = RequestBody.create(MediaType.parse(textBodyContentType), paramsString);
             return requestBody;
         } else {
             // null params

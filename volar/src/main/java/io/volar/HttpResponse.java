@@ -17,7 +17,6 @@
 package io.volar;
 
 
-
 import io.volar.configuration.CustomErrorMessages;
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -29,17 +28,6 @@ import okhttp3.Response;
  */
 
 public final class HttpResponse<T> {
-    public static final int SUCCESS = 200;
-    public static final int NETWORK_ERROR = -100001;
-    public static final int DATA_PARSE_FAILURE = -100002;
-    public static final int SERVER_NO_RESPONSE = -100003;
-
-    public static final int PARSE_TYPE_STRING = 0;
-    public static final int PARSE_TYPE_JSON = 1;
-    public static final int PARSE_TYPE_JSON_ARRAY = 2;
-    public static final int PARSE_TYPE_OBJECT = 3;
-    public static final int PARSE_TYPE_OBJECT_LIST = 4;
-
     public String url;
     public Call call;
     public Headers headers;
@@ -51,32 +39,33 @@ public final class HttpResponse<T> {
     public boolean success;
     public String responseString;
     public T responseData;
+    public Class repsonseDataClass;
     public String extra;
     public long requestCostTime;
     public long parseDataCostTime;
     public int callbackType;
-    public boolean cancelCallback = false;
+    public boolean noNeedCallback;
 
     public void setError(int errorCode) {
         success = false;
         code = errorCode;
         CustomErrorMessages customErrorMessages = Volar.getDefault().getConfiguration().getCustomErrorMessages();
         switch (errorCode) {
-            case NETWORK_ERROR:
+            case HttpConstant.Code.NETWORK_ERROR:
                 if (customErrorMessages != null) {
                     message = customErrorMessages.networkError();
                 } else {
                     message = HttpConstant.ErrorMessages.NETWORK_ERROR;
                 }
                 break;
-            case SERVER_NO_RESPONSE:
+            case HttpConstant.Code.SERVER_NO_RESPONSE:
                 if (customErrorMessages != null) {
                     message = customErrorMessages.serverNoResponse();
                 } else {
                     message = HttpConstant.ErrorMessages.SERVER_NO_RESPONSE;
                 }
                 break;
-            case DATA_PARSE_FAILURE:
+            case HttpConstant.Code.DATA_PARSE_FAILURE:
                 if (customErrorMessages != null) {
                     message = customErrorMessages.dataParseFailed();
                 } else {

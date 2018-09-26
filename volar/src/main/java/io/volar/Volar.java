@@ -30,7 +30,6 @@ public final class Volar {
     private MainHandler mainHandler;
     private WorkHandler workHandler;
     private HandlerThread workThread;
-    private int uniqueMessageWhat;
 
     private Volar(NetworkConfiguration customConfiguration) {
         if (customConfiguration == null) {
@@ -38,40 +37,48 @@ public final class Volar {
         } else {
             this.configuration = customConfiguration;
         }
-        if (okHttpClient == null) {
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.connectTimeout(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
-            builder.readTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS);
-            builder.writeTimeout(configuration.getWriteTimeout(), TimeUnit.MILLISECONDS);
-            builder.cache(configuration.getCache());
-            builder.retryOnConnectionFailure(configuration.isRetryOnConnectionFailure());
-            builder.followRedirects(configuration.isFollowRedirects());
-            builder.followSslRedirects(configuration.isFollowSslRedirects());
-            builder.proxy(configuration.getProxy());
-            if (configuration.getDns() != null) {
-                builder.dns(configuration.getDns());
-            }
-            if (configuration.getCookieJar() != null) {
-                builder.cookieJar(configuration.getCookieJar());
-            }
-            if (configuration.getSslSocketFactoryParams() != null
-                    && configuration.getSslSocketFactoryParams().getSslSocketFactory() != null
-                    && configuration.getSslSocketFactoryParams().getX509TrustManager() != null) {
-                builder.sslSocketFactory(configuration.getSslSocketFactoryParams().getSslSocketFactory(),
-                        configuration.getSslSocketFactoryParams().getX509TrustManager());
-            }
-            if (configuration.getHostnameVerifier() != null) {
-                builder.hostnameVerifier(configuration.getHostnameVerifier());
-            }
-            if (configuration.isTrustAllHttps()) {
-                SslSocketFactoryParams sslSocketFactoryParams = SslSocketFactoryHelper.getTrustAllSslSocketFactory();
-                if (sslSocketFactoryParams.getX509TrustManager() != null && sslSocketFactoryParams.getSslSocketFactory() != null) {
-                    builder.sslSocketFactory(sslSocketFactoryParams.getSslSocketFactory(), sslSocketFactoryParams.getX509TrustManager());
-                    builder.hostnameVerifier(new TrustAllHostnameVerifier());
-                }
-            }
-            okHttpClient = builder.build();
+        okHttpClient = generateOkHttpClient(configuration);
+    }
+
+    /**
+     * Generate a OkHttpClient through custom configuration
+     *
+     * @param configuration
+     * @return
+     */
+    OkHttpClient generateOkHttpClient(NetworkConfiguration configuration) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
+        builder.readTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS);
+        builder.writeTimeout(configuration.getWriteTimeout(), TimeUnit.MILLISECONDS);
+        builder.cache(configuration.getCache());
+        builder.retryOnConnectionFailure(configuration.isRetryOnConnectionFailure());
+        builder.followRedirects(configuration.isFollowRedirects());
+        builder.followSslRedirects(configuration.isFollowSslRedirects());
+        builder.proxy(configuration.getProxy());
+        if (configuration.getDns() != null) {
+            builder.dns(configuration.getDns());
         }
+        if (configuration.getCookieJar() != null) {
+            builder.cookieJar(configuration.getCookieJar());
+        }
+        if (configuration.getSslSocketFactoryParams() != null
+                && configuration.getSslSocketFactoryParams().getSslSocketFactory() != null
+                && configuration.getSslSocketFactoryParams().getX509TrustManager() != null) {
+            builder.sslSocketFactory(configuration.getSslSocketFactoryParams().getSslSocketFactory(),
+                    configuration.getSslSocketFactoryParams().getX509TrustManager());
+        }
+        if (configuration.getHostnameVerifier() != null) {
+            builder.hostnameVerifier(configuration.getHostnameVerifier());
+        }
+        if (configuration.isTrustAllHttps()) {
+            SslSocketFactoryParams sslSocketFactoryParams = SslSocketFactoryHelper.getTrustAllSslSocketFactory();
+            if (sslSocketFactoryParams.getX509TrustManager() != null && sslSocketFactoryParams.getSslSocketFactory() != null) {
+                builder.sslSocketFactory(sslSocketFactoryParams.getSslSocketFactory(), sslSocketFactoryParams.getX509TrustManager());
+                builder.hostnameVerifier(new TrustAllHostnameVerifier());
+            }
+        }
+        return builder.build();
     }
 
     /**
@@ -113,8 +120,17 @@ public final class Volar {
      *
      * @return configuration
      */
-    NetworkConfiguration getConfiguration() {
+    public NetworkConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Get separate configuration builder
+     *
+     * @return builder
+     */
+    public NetworkConfiguration.Builder getSeparateConfigurationBuilder() {
+        return configuration.newBuilder();
     }
 
     /**
@@ -244,36 +260,15 @@ public final class Volar {
      * @return thread
      */
     private HandlerThread getWorkThread() {
-        if (workThread == null || !workThread.isAlive()) {
+        if (workThread == null || !workThread.isAlive() || workHandler == null || workHandler.reference.get() == null) {
             workThread = new HandlerThread("volar", Process.THREAD_PRIORITY_BACKGROUND);
             workThread.start();
         }
         return workThread;
     }
 
-    /**
-     * Get a unique message what
-     *
-     * @return message what
-     */
-    int generateMessageWhat() {
-        uniqueMessageWhat++;
-        if (uniqueMessageWhat > HttpConstant.MSG_MAX_WHAT) {
-            uniqueMessageWhat = 0;
-        }
-        return uniqueMessageWhat;
-    }
-
-    /**
-     * Handle request callback in main thread
-     *
-     * @param msg message
-     */
     private void handleMainMessage(Message msg) {
-        if (msg.obj != null && msg.obj instanceof HttpRequest) {
-            ((HttpRequest) msg.obj).callback();
-            msg.obj = null;
-        }
+
     }
 
     private void handleWorkMessage(Message msg) {
@@ -309,7 +304,7 @@ public final class Volar {
     }
 
     /**
-     * Main Thread handler
+     * Main thread handler
      */
     static final class MainHandler extends Handler {
         private final SoftReference<Volar> reference;
@@ -328,6 +323,9 @@ public final class Volar {
         }
     }
 
+    /**
+     * Work thread handler
+     */
     static final class WorkHandler extends Handler {
         private final SoftReference<Volar> reference;
 

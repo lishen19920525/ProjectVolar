@@ -46,9 +46,14 @@ public final class NetworkConfiguration {
     private NetworkConfiguration(Builder builder) {
         logEnabled = builder.logEnabled;
         logTag = builder.logTag;
+        logHeader = builder.logHeader;
+        logLevel = builder.logLevel;
         commonHeaders = builder.commonHeaders;
         customFilter = builder.customFilter;
         customErrorMessages = builder.customErrorMessages;
+        trustAllHttps = builder.trustAllHttps;
+        logParamsBeforeFilter = builder.logParamsBeforeFilter;
+        logResponseBeforeFilter = builder.logResponseBeforeFilter;
         connectTimeout = builder.connectTimeout;
         readTimeout = builder.readTimeout;
         writeTimeout = builder.writeTimeout;
@@ -61,10 +66,6 @@ public final class NetworkConfiguration {
         followRedirects = builder.followRedirects;
         cache = builder.cache;
         proxy = builder.proxy;
-        trustAllHttps = builder.trustAllHttps;
-        logParamsBeforeFilter = builder.logParamsBeforeFilter;
-        logResponseBeforeFilter = builder.logResponseBeforeFilter;
-        logLevel = builder.logLevel;
     }
 
     public boolean isLogEnabled() {
@@ -73,6 +74,14 @@ public final class NetworkConfiguration {
 
     public String getLogTag() {
         return logTag;
+    }
+
+    public boolean isLogHeader() {
+        return logHeader;
+    }
+
+    public HttpConstant.LogLevel getLogLevel() {
+        return logLevel;
     }
 
     public CommonHeaders getCommonHeaders() {
@@ -85,6 +94,18 @@ public final class NetworkConfiguration {
 
     public CustomErrorMessages getCustomErrorMessages() {
         return customErrorMessages;
+    }
+
+    public boolean isTrustAllHttps() {
+        return trustAllHttps;
+    }
+
+    public boolean isLogParamsBeforeFilter() {
+        return logParamsBeforeFilter;
+    }
+
+    public boolean isLogResponseBeforeFilter() {
+        return logResponseBeforeFilter;
     }
 
     public long getConnectTimeout() {
@@ -135,24 +156,8 @@ public final class NetworkConfiguration {
         return proxy;
     }
 
-    public boolean isTrustAllHttps() {
-        return trustAllHttps;
-    }
-
-    public boolean isLogParamsBeforeFilter() {
-        return logParamsBeforeFilter;
-    }
-
-    public boolean isLogResponseBeforeFilter() {
-        return logResponseBeforeFilter;
-    }
-
-    public HttpConstant.LogLevel getLogLevel() {
-        return logLevel;
-    }
-
-    public boolean isLogHeader() {
-        return logHeader;
+    public Builder newBuilder() {
+        return new Builder(this);
     }
 
     public static final class Builder {
@@ -196,6 +201,25 @@ public final class NetworkConfiguration {
             logResponseBeforeFilter = false;
             logParamsBeforeFilter = false;
             logHeader = true;
+        }
+
+        private Builder(NetworkConfiguration configuration) {
+            logEnabled = configuration.logEnabled;
+            logTag = configuration.logTag;
+            logLevel = configuration.logLevel;
+            connectTimeout = configuration.connectTimeout;
+            readTimeout = configuration.readTimeout;
+            writeTimeout = configuration.writeTimeout;
+            cookieJar = configuration.cookieJar;
+            hostnameVerifier = configuration.hostnameVerifier;
+            dns = configuration.dns;
+            followSslRedirects = configuration.followSslRedirects;
+            followRedirects = configuration.followRedirects;
+            retryOnConnectionFailure = configuration.retryOnConnectionFailure;
+            trustAllHttps = configuration.trustAllHttps;
+            logResponseBeforeFilter = configuration.logResponseBeforeFilter;
+            logParamsBeforeFilter = configuration.logParamsBeforeFilter;
+            logHeader = configuration.logHeader;
         }
 
         public Builder logEnabled(boolean val) {
