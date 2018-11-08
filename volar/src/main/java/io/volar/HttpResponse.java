@@ -28,6 +28,11 @@ import okhttp3.Response;
  */
 
 public final class HttpResponse<T> {
+    public static final int SUCCESS = HttpConstant.Code.SUCCESS;
+    public static final int NETWORK_ERROR = HttpConstant.Code.DATA_PARSE_FAILURE;
+    public static final int DATA_PARSE_FAILURE = HttpConstant.Code.DATA_PARSE_FAILURE;
+    public static final int SERVER_NO_RESPONSE = HttpConstant.Code.SERVER_NO_RESPONSE;
+
     public String url;
     public Call call;
     public Headers headers;

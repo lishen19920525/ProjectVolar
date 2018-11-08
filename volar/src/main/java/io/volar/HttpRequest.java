@@ -339,26 +339,23 @@ class HttpRequest<T> {
         }
     }
 
-    public static final class HttpRequestBuilder<V> {
+    public static final class HttpRequestBuilder {
         private String url = "";
         private HttpConstant.Method method;
-        private HttpParams httpParams;
-        private BaseCallback callback;
-        private Class dataClass;
-        private int parseType;
-        private Object tag;
-        private NetworkConfiguration separateConfiguration;
+        private HttpParams httpParams = new HttpParams();
+        private BaseCallback callback = null;
+        private Class dataClass = null;
+        private int parseType = HttpConstant.ParseType.PARSE_TYPE_STRING;
+        private Object tag = null;
+        private NetworkConfiguration separateConfiguration = null;
 
-        <V> HttpRequestBuilder(String url, HttpConstant.Method method) {
+        HttpRequestBuilder(String url, HttpConstant.Method method) {
             if (url != null)
                 this.url = url;
             this.method = method;
-
-            httpParams = new HttpParams();
-            parseType = HttpConstant.ParseType.PARSE_TYPE_STRING;
         }
 
-        public <V> HttpRequestBuilder params(HttpParams val) {
+        public HttpRequestBuilder params(HttpParams val) {
             if (val != null) {
                 httpParams = val;
             }
@@ -383,7 +380,7 @@ class HttpRequest<T> {
             return this;
         }
 
-        public <V> HttpRequestBuilder callback(JsonCallback val1) {
+        public HttpRequestBuilder callback(JsonCallback val1) {
             if (val1 != null) {
                 callback = val1;
                 parseType = HttpConstant.ParseType.PARSE_TYPE_JSON;
@@ -391,7 +388,7 @@ class HttpRequest<T> {
             return this;
         }
 
-        public <V> HttpRequestBuilder callback(JsonArrayCallback val1) {
+        public HttpRequestBuilder callback(JsonArrayCallback val1) {
             if (val1 != null) {
                 callback = val1;
                 parseType = HttpConstant.ParseType.PARSE_TYPE_JSON_ARRAY;
@@ -399,7 +396,7 @@ class HttpRequest<T> {
             return this;
         }
 
-        public <V> HttpRequestBuilder callback(StringCallback val1) {
+        public HttpRequestBuilder callback(StringCallback val1) {
             if (val1 != null) {
                 callback = val1;
                 parseType = HttpConstant.ParseType.PARSE_TYPE_STRING;
@@ -407,12 +404,12 @@ class HttpRequest<T> {
             return this;
         }
 
-        public <V> HttpRequestBuilder tag(Object val) {
+        public HttpRequestBuilder tag(Object val) {
             tag = val;
             return this;
         }
 
-        public <V> HttpRequestBuilder useSeparateConfiguration(NetworkConfiguration configuration) {
+        public HttpRequestBuilder useSeparateConfiguration(NetworkConfiguration configuration) {
             separateConfiguration = configuration;
             return this;
         }

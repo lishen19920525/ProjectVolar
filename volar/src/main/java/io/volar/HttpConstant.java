@@ -1,7 +1,5 @@
 package io.volar;
 
-import java.security.PublicKey;
-
 /**
  * Created by LiShen on 2017/11/27.
  * Constants
@@ -42,8 +40,8 @@ public final class HttpConstant {
 
     public static final class Code {
         public static final int SUCCESS = 200;
-        public static final int NETWORK_ERROR = -1000;
-        public static final int DATA_PARSE_FAILURE = -1010;
+        public static final int NETWORK_ERROR = -1;
+        public static final int DATA_PARSE_FAILURE = -2;
         public static final int SERVER_NO_RESPONSE = 503;
     }
 
