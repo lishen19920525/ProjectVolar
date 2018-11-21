@@ -6,10 +6,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
-import io.volar.configuration.NetworkConfiguration;
+import io.volar.configuration.VolarConfiguration;
 import io.volar.https.SslSocketFactoryHelper;
 import io.volar.https.SslSocketFactoryParams;
 import io.volar.https.TrustAllHostnameVerifier;
@@ -25,15 +25,15 @@ import okhttp3.OkHttpClient;
 public final class Volar {
     private volatile static Volar volar;
 
-    private NetworkConfiguration configuration;
+    private VolarConfiguration configuration;
     private OkHttpClient okHttpClient;
     private MainHandler mainHandler;
     private WorkHandler workHandler;
     private HandlerThread workThread;
 
-    private Volar(NetworkConfiguration customConfiguration) {
+    private Volar(VolarConfiguration customConfiguration) {
         if (customConfiguration == null) {
-            this.configuration = new NetworkConfiguration.Builder().build();
+            this.configuration = new VolarConfiguration.Builder().build();
         } else {
             this.configuration = customConfiguration;
         }
@@ -46,7 +46,7 @@ public final class Volar {
      * @param configuration
      * @return
      */
-    OkHttpClient generateOkHttpClient(NetworkConfiguration configuration) {
+    OkHttpClient generateOkHttpClient(VolarConfiguration configuration) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
         builder.readTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS);
@@ -82,11 +82,12 @@ public final class Volar {
     }
 
     /**
-     * Init, must call it before {@link #getDefault()}
+     * Init, must call it before {@link #getDefault()}, do not set param 'customConfiguration'
+     * as global variable
      *
      * @param customConfiguration configuration
      */
-    public static Volar init(NetworkConfiguration customConfiguration) {
+    public static Volar init(VolarConfiguration customConfiguration) {
         if (volar == null) {
             synchronized (Volar.class) {
                 if (volar == null) {
@@ -98,12 +99,21 @@ public final class Volar {
     }
 
     /**
-     * Get a volar singleton, must call it after {@link #init(NetworkConfiguration)}
+     * Get a volar singleton, must call it after {@link #init(VolarConfiguration)}
      *
      * @return volar
      */
     public static Volar getDefault() {
         return init(null);
+    }
+
+    /**
+     * Short version
+     *
+     * @return
+     */
+    public static Volar get() {
+        return getDefault();
     }
 
     /**
@@ -120,7 +130,7 @@ public final class Volar {
      *
      * @return configuration
      */
-    public NetworkConfiguration getConfiguration() {
+    public VolarConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -129,7 +139,7 @@ public final class Volar {
      *
      * @return builder
      */
-    public NetworkConfiguration.Builder getSeparateConfigurationBuilder() {
+    public VolarConfiguration.Builder getSeparateConfigurationBuilder() {
         return configuration.newBuilder();
     }
 
@@ -307,11 +317,11 @@ public final class Volar {
      * Main thread handler
      */
     static final class MainHandler extends Handler {
-        private final SoftReference<Volar> reference;
+        private final WeakReference<Volar> reference;
 
         private MainHandler(Volar volar, Looper Looper) {
             super(Looper);
-            reference = new SoftReference<>(volar);
+            reference = new WeakReference<>(volar);
         }
 
         @Override
@@ -327,11 +337,11 @@ public final class Volar {
      * Work thread handler
      */
     static final class WorkHandler extends Handler {
-        private final SoftReference<Volar> reference;
+        private final WeakReference<Volar> reference;
 
         private WorkHandler(Volar volar, Looper Looper) {
             super(Looper);
-            reference = new SoftReference<>(volar);
+            reference = new WeakReference<>(volar);
         }
 
         @Override

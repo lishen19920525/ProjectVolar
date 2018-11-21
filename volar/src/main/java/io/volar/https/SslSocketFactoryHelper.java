@@ -13,6 +13,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import io.volar.configuration.VolarConfiguration;
+
 /**
  * Created by LiShen on 2017/11/28.
  * Https helper
@@ -21,7 +23,7 @@ import javax.net.ssl.X509TrustManager;
 public class SslSocketFactoryHelper {
     /**
      * Get a https ssl params
-     * use in {@link io.volar.configuration.NetworkConfiguration.Builder#sslSocketFactoryParams(SslSocketFactoryParams)}
+     * use in {@link VolarConfiguration.Builder#sslSocketFactoryParams(SslSocketFactoryParams)}
      *
      * @param certificates server certificates
      * @param bks          client certificate .bks file

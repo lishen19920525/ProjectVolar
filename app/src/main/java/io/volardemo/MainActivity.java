@@ -1,4 +1,4 @@
-package io.volar.demo;
+package io.volardemo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,12 +7,14 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.volar.HttpParams;
 import io.volar.HttpResponse;
 import io.volar.Volar;
 import io.volar.callback.StringCallback;
-import io.volar.configuration.CustomFilter;
-import io.volar.configuration.NetworkConfiguration;
+import io.volar.configuration.VolarConfiguration;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick(View v) {
-        NetworkConfiguration separateConfiguration = Volar.getDefault().getSeparateConfigurationBuilder()
+        VolarConfiguration separateConfiguration = Volar.getDefault().getSeparateConfigurationBuilder()
                 .connectTimeout(5 * 1000)
                 .readTimeout(20 * 1000)
                 .writeTimeout(20 * 1000)
@@ -36,8 +38,18 @@ public class MainActivity extends AppCompatActivity {
                 .logEnabled(true)
                 .build();
 
-        Volar.getDefault().GET("https://m.baidu.com/")
+        HttpParams httpParams = new HttpParams();
+        httpParams.put("word", 123456);
+        Map<String, Object> mapParam = new HashMap<>();
+        mapParam.put("song", "Who Says");
+        mapParam.put("artist", "Selena Gomez");
+        mapParam.put("time", 195);
+        mapParam.put("like", true);
+        httpParams.put("info", mapParam);
+
+        Volar.getDefault().POST("https://m.baidu.com/s")
                 .tag(this)
+                .params(httpParams)
                 .useSeparateConfiguration(separateConfiguration)
                 .callback(new StringCallback() {
                     @Override

@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
 
 import io.volar.util.JSON;
 import io.volar.util.arraymap.VolarArrayMap;
@@ -144,6 +145,17 @@ public final class HttpParams {
     }
 
     /**
+     * Cant use in GET request
+     *
+     * @param key   key
+     * @param value value
+     */
+    public void put(String key, Map value) {
+        if (!TextUtils.isEmpty(key))
+            paramsMap.put(key, value);
+    }
+
+    /**
      * Put form key value
      *
      * @param key   key
@@ -212,7 +224,7 @@ public final class HttpParams {
      * @return
      */
     public String getParamsString() {
-        if (TextUtils.isEmpty(paramsString)) {
+        if (!TextUtils.isEmpty(paramsString)) {
             return paramsString;
         }
         if (paramsMap.size() > 0) {
@@ -247,7 +259,7 @@ public final class HttpParams {
         for (int i = 0; i < paramsMap.keySet().size(); i++) {
             key = paramsMap.keyAt(i);
             value = paramsMap.get(key);
-            if (value != null) {
+            if (value != null && !(value instanceof Map)) {
                 valueStr = String.valueOf(value);
                 try {
                     key = URLEncoder.encode(key, "utf-8");

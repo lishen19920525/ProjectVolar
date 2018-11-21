@@ -18,7 +18,7 @@ import okhttp3.internal.tls.OkHostnameVerifier;
  * NetworkConfiguration
  */
 
-public final class NetworkConfiguration {
+public final class VolarConfiguration {
     private boolean logEnabled;
     private String logTag;
     private boolean logHeader;
@@ -43,7 +43,7 @@ public final class NetworkConfiguration {
     private Cache cache;
     private Proxy proxy;
 
-    private NetworkConfiguration(Builder builder) {
+    private VolarConfiguration(Builder builder) {
         logEnabled = builder.logEnabled;
         logTag = builder.logTag;
         logHeader = builder.logHeader;
@@ -203,7 +203,7 @@ public final class NetworkConfiguration {
             logHeader = true;
         }
 
-        private Builder(NetworkConfiguration configuration) {
+        private Builder(VolarConfiguration configuration) {
             logEnabled = configuration.logEnabled;
             logTag = configuration.logTag;
             logLevel = configuration.logLevel;
@@ -346,8 +346,8 @@ public final class NetworkConfiguration {
             return this;
         }
 
-        public NetworkConfiguration build() {
-            return new NetworkConfiguration(this);
+        public VolarConfiguration build() {
+            return new VolarConfiguration(this);
         }
     }
 }

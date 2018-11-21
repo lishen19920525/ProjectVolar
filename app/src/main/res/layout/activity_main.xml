@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f6f6f7"
-    tools:context=".MainActivity">
+    tools:context="io.volardemo.MainActivity">
 
     <WebView
         android:id="@+id/wvMain"

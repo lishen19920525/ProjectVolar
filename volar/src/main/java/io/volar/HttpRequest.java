@@ -31,7 +31,7 @@ import io.volar.callback.JsonCallback;
 import io.volar.callback.ObjectCallback;
 import io.volar.callback.ObjectListCallback;
 import io.volar.callback.StringCallback;
-import io.volar.configuration.NetworkConfiguration;
+import io.volar.configuration.VolarConfiguration;
 import io.volar.util.JSON;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -52,7 +52,7 @@ class HttpRequest<T> {
     private BaseCallback callback;
     private Class dataClass;
     private WeakReference<Object> tag;
-    private NetworkConfiguration networkConfiguration;
+    private VolarConfiguration networkConfiguration;
     private boolean useSeparateOkHttpClient = false;
 
     private HttpResponse<T> httpResponse;
@@ -140,10 +140,13 @@ class HttpRequest<T> {
         if (method != HttpConstant.Method.GET && method != HttpConstant.Method.HEAD) {
             if (networkConfiguration.isLogParamsBeforeFilter()) {
                 // log original json params
-                Volar.getDefault().log("REQUEST STRING PARAMS: " + originalJsonStringBody);
+                if (!TextUtils.isEmpty(originalJsonStringBody))
+                    Volar.getDefault().log("REQUEST STRING PARAMS: " + originalJsonStringBody);
             } else {
                 // log json params after custom filter
-                Volar.getDefault().log("REQUEST STRING PARAMS: " + httpParams.getParamsString());
+                String paramsStr = httpParams.getParamsString();
+                if (!TextUtils.isEmpty(paramsStr))
+                    Volar.getDefault().log("REQUEST STRING PARAMS: " + paramsStr);
             }
         }
 
@@ -155,7 +158,9 @@ class HttpRequest<T> {
             Headers headers = httpParams.getHeadersBuilder().build();
             requestBuilder.headers(headers);
             if (networkConfiguration.isLogHeader()) {
-                Volar.getDefault().log("REQUEST HEADERS: \n" + headers.toString());
+                String headersStr = headers.toString();
+                if (!TextUtils.isEmpty(headersStr))
+                    Volar.getDefault().log("REQUEST HEADERS: \n" + headersStr);
             }
         }
 
@@ -236,20 +241,22 @@ class HttpRequest<T> {
         }
         httpResponse.parseDataCostTime = System.currentTimeMillis() - timeMilestone;
 
-        String responseLog = "RESPONSE CODE: " + httpResponse.code
-                + "\nRESPONSE MESSAGE: " + httpResponse.message
-                + "\nREQUEST COST TIME: " + httpResponse.requestCostTime + " ms";
-        if (httpResponse.parseDataCostTime > 0) {
-            responseLog += "\nPARSE DATA COST TIME: " + httpResponse.parseDataCostTime + "ms";
-        }
-        responseLog += "\nURL: " + httpResponse.url;
-
         // show original response or not
         if (networkConfiguration.isLogResponseBeforeFilter()) {
             Volar.getDefault().log("RESPONSE: " + originalResponseString);
         } else {
             Volar.getDefault().log("RESPONSE: " + httpResponse.responseString);
         }
+
+        String responseLog = "RESPONSE CODE: " + httpResponse.code;
+        if (!TextUtils.isEmpty(httpResponse.message)) {
+            responseLog += "\nRESPONSE MESSAGE: " + httpResponse.message;
+        }
+        responseLog += "\nREQUEST COST TIME: " + httpResponse.requestCostTime + " ms";
+        if (httpResponse.parseDataCostTime > 0) {
+            responseLog += "\nPARSE DATA COST TIME: " + httpResponse.parseDataCostTime + "ms";
+        }
+        responseLog += "\nURL: " + httpResponse.url;
         Volar.getDefault().log(responseLog);
 
         // post to main thread to callback
@@ -347,7 +354,7 @@ class HttpRequest<T> {
         private Class dataClass = null;
         private int parseType = HttpConstant.ParseType.PARSE_TYPE_STRING;
         private Object tag = null;
-        private NetworkConfiguration separateConfiguration = null;
+        private VolarConfiguration separateConfiguration = null;
 
         HttpRequestBuilder(String url, HttpConstant.Method method) {
             if (url != null)
@@ -409,7 +416,7 @@ class HttpRequest<T> {
             return this;
         }
 
-        public HttpRequestBuilder useSeparateConfiguration(NetworkConfiguration configuration) {
+        public HttpRequestBuilder useSeparateConfiguration(VolarConfiguration configuration) {
             separateConfiguration = configuration;
             return this;
         }
