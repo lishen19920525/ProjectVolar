@@ -243,9 +243,9 @@ class HttpRequest<T> {
 
         // show original response or not
         if (networkConfiguration.isLogResponseBeforeFilter()) {
-            Volar.getDefault().log("RESPONSE: " + originalResponseString, httpResponse.success);
+            Volar.getDefault().log("RESPONSE: " + originalResponseString, !httpResponse.success);
         } else {
-            Volar.getDefault().log("RESPONSE: " + httpResponse.responseString, httpResponse.success);
+            Volar.getDefault().log("RESPONSE: " + httpResponse.responseString, !httpResponse.success);
         }
 
         String responseLog = "RESPONSE CODE: " + httpResponse.code;
@@ -257,7 +257,7 @@ class HttpRequest<T> {
             responseLog += "\nPARSE DATA COST TIME: " + httpResponse.parseDataCostTime + "ms";
         }
         responseLog += "\nURL: " + httpResponse.url;
-        Volar.getDefault().log(responseLog, httpResponse.success);
+        Volar.getDefault().log(responseLog, !httpResponse.success);
 
         // post to main thread to callback
         if (!httpResponse.noNeedCallback) {
