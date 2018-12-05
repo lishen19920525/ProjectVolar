@@ -291,7 +291,7 @@ public final class Volar {
      * @param content
      */
     void log(String content) {
-        log(content, true);
+        log(content, false);
     }
 
     /**
