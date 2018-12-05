@@ -286,12 +286,25 @@ public final class Volar {
     }
 
     /**
+     * Logger, default not error
+     *
+     * @param content
+     */
+    void log(String content) {
+        log(content, true);
+    }
+
+    /**
      * Logger
      *
      * @param content content
      */
-    void log(String content) {
+    void log(String content, boolean error) {
         if (getConfiguration().isLogEnabled()) {
+            if (error) {
+                LOG.e(getConfiguration().getLogTag(), content);
+                return;
+            }
             switch (getConfiguration().getLogLevel()) {
                 case V:
                     LOG.v(getConfiguration().getLogTag(), content);

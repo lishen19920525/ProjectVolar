@@ -141,12 +141,12 @@ class HttpRequest<T> {
             if (networkConfiguration.isLogParamsBeforeFilter()) {
                 // log original json params
                 if (!TextUtils.isEmpty(originalJsonStringBody))
-                    Volar.getDefault().log("REQUEST STRING PARAMS: " + originalJsonStringBody);
+                    Volar.getDefault().log("REQUEST PARAMS: " + originalJsonStringBody);
             } else {
                 // log json params after custom filter
                 String paramsStr = httpParams.getParamsString();
                 if (!TextUtils.isEmpty(paramsStr))
-                    Volar.getDefault().log("REQUEST STRING PARAMS: " + paramsStr);
+                    Volar.getDefault().log("REQUEST PARAMS: " + paramsStr);
             }
         }
 
@@ -243,9 +243,9 @@ class HttpRequest<T> {
 
         // show original response or not
         if (networkConfiguration.isLogResponseBeforeFilter()) {
-            Volar.getDefault().log("RESPONSE: " + originalResponseString);
+            Volar.getDefault().log("RESPONSE: " + originalResponseString, httpResponse.success);
         } else {
-            Volar.getDefault().log("RESPONSE: " + httpResponse.responseString);
+            Volar.getDefault().log("RESPONSE: " + httpResponse.responseString, httpResponse.success);
         }
 
         String responseLog = "RESPONSE CODE: " + httpResponse.code;
@@ -257,7 +257,7 @@ class HttpRequest<T> {
             responseLog += "\nPARSE DATA COST TIME: " + httpResponse.parseDataCostTime + "ms";
         }
         responseLog += "\nURL: " + httpResponse.url;
-        Volar.getDefault().log(responseLog);
+        Volar.getDefault().log(responseLog, httpResponse.success);
 
         // post to main thread to callback
         if (!httpResponse.noNeedCallback) {
