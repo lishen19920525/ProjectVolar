@@ -1,6 +1,7 @@
 package io.volar.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -14,7 +15,9 @@ import java.util.List;
  */
 
 public class JSON {
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder()
+            .disableHtmlEscaping()
+            .create();
 
     public static String toJSONString(Object obj) {
         try {
