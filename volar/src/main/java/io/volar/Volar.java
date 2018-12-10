@@ -121,7 +121,7 @@ public final class Volar {
      *
      * @return okHttpClient
      */
-    OkHttpClient getOkHttpClient() {
+    public OkHttpClient getOkHttpClient() {
         return okHttpClient;
     }
 
