@@ -1,7 +1,7 @@
 # ProjectVolar
 
 [![](https://jitpack.io/v/lishen19920525/ProjectVolar.svg)](https://jitpack.io/#lishen19920525/ProjectVolar)
-</>
+</br>
 Android volar framework (based on okhttp)
 ```Groovy
 	allprojects {
