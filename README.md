@@ -16,4 +16,4 @@ Android volar framework (based on okhttp)
 	        implementation 'com.github.lishen19920525:ProjectVolar:v0.0.5'
 	}
 ```
-[How to use](https://github.com/lishen19920525/ProjectVolar/tree/master/app/src/main)
+[How to use](https://github.com/lishen19920525/ProjectVolar/tree/master/app/src/main/java/io/volardemo)
