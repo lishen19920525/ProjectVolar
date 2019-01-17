@@ -2,12 +2,15 @@ package io.volardemo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.volar.HttpParams;
@@ -15,6 +18,7 @@ import io.volar.HttpResponse;
 import io.volar.Volar;
 import io.volar.callback.StringCallback;
 import io.volar.configuration.VolarConfiguration;
+import io.volar.util.LOG;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,14 +50,23 @@ public class MainActivity extends AppCompatActivity {
         mapParam.put("time", 195);
         mapParam.put("like", true);
         httpParams.put("info", mapParam);
+        List<String> list = new ArrayList<>();
+        list.add("123");
+        list.add("1234");
+        list.add("12345");
+        httpParams.put("list", list);
+        httpParams.setExtra("extra");
 
-        Volar.getDefault().POST("https://m.baidu.com/s")
+        Volar.getDefault().GET("https://m.baidu.com/s")
                 .tag(this)
                 .params(httpParams)
-                .useSeparateConfiguration(separateConfiguration)
+                .separateConfig(separateConfiguration)
                 .callback(new StringCallback() {
                     @Override
                     public void onSuccess(HttpResponse response, String responseString) {
+                        String hehe = (String) response.getExtra();
+                        LOG.w("VolarDemo", "extra out " + hehe);
+                        LOG.w("VolarDemo", "extra response " + response.getExtra());
                         wvMain.loadDataWithBaseURL("", responseString, "text/html; charset=UTF-8", null, "404");
                     }
 

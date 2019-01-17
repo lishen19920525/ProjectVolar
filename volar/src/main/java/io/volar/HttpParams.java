@@ -35,7 +35,7 @@ public final class HttpParams {
     // content type
     private String textBodyContentType = HttpConstant.ContentType.TEXT_PLAIN;
     // extra
-    public String extra;
+    private Object extra;
 
     public HttpParams() {
         paramsMap = new VolarArrayMap<>();
@@ -145,12 +145,25 @@ public final class HttpParams {
     }
 
     /**
-     * Cant use in GET request
+     * Put key value params into request, map value
+     * ignore in GET request
      *
      * @param key   key
      * @param value value
      */
     public void put(String key, Map value) {
+        if (!TextUtils.isEmpty(key))
+            paramsMap.put(key, value);
+    }
+
+    /**
+     * Put key value params into request, list value
+     * ignore in GET request
+     *
+     * @param key
+     * @param value
+     */
+    public void put(String key, List value) {
         if (!TextUtils.isEmpty(key))
             paramsMap.put(key, value);
     }
@@ -208,6 +221,26 @@ public final class HttpParams {
     }
 
     /**
+     * Put some extra
+     *
+     * @param extra
+     */
+    public void setExtra(Object extra) {
+        this.extra = extra;
+    }
+
+    /**
+     * Get extra out, only use once
+     *
+     * @return extra
+     */
+    public Object getExtra() {
+        Object extra = this.extra;
+        this.extra = null;
+        return extra;
+    }
+
+    /**
      * Get params json string
      * Use {@link #getParamsString()}
      *
@@ -259,7 +292,7 @@ public final class HttpParams {
         for (int i = 0; i < paramsMap.keySet().size(); i++) {
             key = paramsMap.keyAt(i);
             value = paramsMap.get(key);
-            if (value != null && !(value instanceof Map)) {
+            if (value != null && !(value instanceof Map) && !(value instanceof List)) {
                 valueStr = String.valueOf(value);
                 try {
                     key = URLEncoder.encode(key, "utf-8");

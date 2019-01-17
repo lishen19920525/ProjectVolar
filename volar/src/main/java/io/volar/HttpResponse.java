@@ -44,12 +44,28 @@ public final class HttpResponse<T> {
     public boolean success;
     public String responseString;
     public T responseData;
-    public Class repsonseDataClass;
-    public String extra;
+    public Class responseDataClass;
     public long requestCostTime;
     public long parseDataCostTime;
     public int callbackType;
     public boolean noNeedCallback;
+
+    private Object extra;
+
+    /**
+     * Only use once
+     *
+     * @return
+     */
+    public Object getExtra() {
+        Object extra = this.extra;
+        this.extra = null;
+        return extra;
+    }
+
+    void setExtra(Object extra) {
+        this.extra = extra;
+    }
 
     public void setError(int errorCode) {
         success = false;

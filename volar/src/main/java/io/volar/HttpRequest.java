@@ -198,8 +198,8 @@ class HttpRequest<T> {
         httpResponse.call = call;
         httpResponse.canceled = call.isCanceled();
         httpResponse.requestCostTime = System.currentTimeMillis() - timeMilestone;
-        httpResponse.extra = httpParams.extra;
-        httpResponse.repsonseDataClass = dataClass;
+        httpResponse.setExtra(httpParams.getExtra());
+        httpResponse.responseDataClass = dataClass;
 
         timeMilestone = System.currentTimeMillis();
 
@@ -416,7 +416,7 @@ class HttpRequest<T> {
             return this;
         }
 
-        public HttpRequestBuilder useSeparateConfiguration(VolarConfiguration configuration) {
+        public HttpRequestBuilder separateConfig(VolarConfiguration configuration) {
             separateConfiguration = configuration;
             return this;
         }
